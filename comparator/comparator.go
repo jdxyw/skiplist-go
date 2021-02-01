@@ -56,5 +56,5 @@ func (Int64Cmp) Compare(rhs, lhs interface{}) int {
 }
 
 func (Int64Cmp) Name() string{
-	return "Int32Comparator"
+	return "Int64Comparator"
 }
