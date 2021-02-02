@@ -103,14 +103,14 @@ func (s *Skiplist) Get(key interface{}) (interface{}, error) {
 
 	n := s.root
 	for i := s.level - 1; i >= 0; i-- {
-		for n.next[i] != nil && s.cmp.Compare(n.next[i].data.key, key) >= 0 {
+		for n.next[i] != nil && s.cmp.Compare(n.next[i].data.key, key) < 0 {
 			n = n.next[i]
 		}
 	}
 
 	n = n.next[0]
 
-	if n != nil && n.data.key == key {
+	if n != nil && s.cmp.Compare(n.data.key, key) == 0 {
 		return n.data.value, nil
 	}
 
@@ -118,7 +118,7 @@ func (s *Skiplist) Get(key interface{}) (interface{}, error) {
 }
 
 func (s *Skiplist) Contains(key interface{}) bool {
-	if s.Get(key) != nil {
+	if _, err := s.Get(key); err == nil {
 		return true
 	}
 
@@ -132,7 +132,7 @@ func (s *Skiplist) Set(key, value interface{}) error {
 	prevs := make([]*node, s.maxLevel, s.maxLevel)
 	n := s.root
 	for i := s.level - 1; i >= 0; i-- {
-		for n.next[i] != nil && s.cmp.Compare(n.next[i].data.key, key) >= 0 {
+		for n.next[i] != nil && s.cmp.Compare(n.next[i].data.key, key) < 0 {
 			n = n.next[i]
 		}
 		prevs[i] = n
@@ -171,14 +171,14 @@ func (s *Skiplist) Delete(key interface{}) error {
 
 	n := head
 	for i := s.level - 1; i >= 0; i-- {
-		for n.next[i] != nil && s.cmp.Compare(n.next[i].data.key, key) >= 0 {
+		for n.next[i] != nil && s.cmp.Compare(n.next[i].data.key, key) < 0 {
 			n = n.next[i]
 		}
 		prevs[i] = n
 	}
 
 	n = n.next[0]
-	if n == nil || s.cmp.Compare(n.next[i].data.key, key) != 0 {
+	if n == nil || s.cmp.Compare(n.data.key, key) != 0 {
 		return ErrNotFound
 	}
 
