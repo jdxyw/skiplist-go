@@ -11,11 +11,11 @@ var DefaultComparator Comparator = defaultCmp{}
 
 type defaultCmp struct{}
 
-func (defaultCmp) Compare(rhs, lhs interface{}) int {
+func (c defaultCmp) Compare(rhs, lhs interface{}) int {
 	return bytes.Compare(rhs.([]byte), lhs.([]byte))
 }
 
-func (defaultCmp) Name() string {
+func (c defaultCmp) Name() string {
 	return "BytewiseComparator"
 }
 
