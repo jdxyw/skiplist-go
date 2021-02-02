@@ -2,8 +2,6 @@ package skiplist
 
 import (
 	"reflect"
-	"skiplist-go/comparator"
-	"sync"
 	"testing"
 )
 
@@ -114,41 +112,6 @@ func TestSkiplist_Get(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Get() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestSkiplist_Len(t *testing.T) {
-	type fields struct {
-		level    int
-		maxLevel int
-		length   int
-		cmp      comparator.Comparator
-		root     *node
-		nodes    []*node
-		mutex    sync.RWMutex
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   int
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := &Skiplist{
-				level:    tt.fields.level,
-				maxLevel: tt.fields.maxLevel,
-				length:   tt.fields.length,
-				cmp:      tt.fields.cmp,
-				root:     tt.fields.root,
-				nodes:    tt.fields.nodes,
-				mutex:    tt.fields.mutex,
-			}
-			if got := s.Len(); got != tt.want {
-				t.Errorf("Len() = %v, want %v", got, tt.want)
 			}
 		})
 	}
