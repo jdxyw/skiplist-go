@@ -66,7 +66,7 @@ type Skiplist struct {
 func NewSkiplist(maxlevel int, cmp comparator.Comparator) *Skiplist {
 	newCmp := cmp
 	if newCmp == nil {
-		newCmp = comparator.DefaultComparator
+		newCmp = comparator.GetDefaultComparator()
 	}
 
 	if maxlevel < 4 {

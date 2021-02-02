@@ -21,7 +21,7 @@ func Test_defaultCmp_Compare(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			de := DefaultComparator
+			de := GetDefaultComparator()
 			if got := de.Compare(tt.args.rhs, tt.args.lhs); got != tt.want {
 				t.Errorf("Compare() = %v, want %v", got, tt.want)
 			}
