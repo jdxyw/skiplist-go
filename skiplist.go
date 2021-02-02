@@ -60,6 +60,7 @@ type Skiplist struct {
 	cmp      comparator.Comparator
 	root     *node
 	nodes    []*node
+	mutex    sync.RWMutex
 }
 
 func NewSkiplist(maxlevel int, cmp comparator.Comparator) *Skiplist {
@@ -70,6 +71,10 @@ func NewSkiplist(maxlevel int, cmp comparator.Comparator) *Skiplist {
 
 	if maxlevel < 4 {
 		panic("skiplist: the maxlevel should be larger than 4!")
+	}
+
+	if maxlevel > kMaxHeight {
+		maxlevel = kMaxHeight
 	}
 
 	return &Skiplist{
@@ -92,7 +97,10 @@ func (s *Skiplist) MaxLevel() int {
 	return s.maxLevel
 }
 
-func (s *Skiplist) Find(key interface{}) (interface{}, error) {
+func (s *Skiplist) Get(key interface{}) (interface{}, error) {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
 	n := s.root
 	for i := s.level - 1; i >= 0; i-- {
 		for n.next[i] != nil && s.cmp.Compare(n.next[i].data.key, key) >= 0 {
@@ -110,16 +118,18 @@ func (s *Skiplist) Find(key interface{}) (interface{}, error) {
 }
 
 func (s *Skiplist) Contains(key interface{}) bool {
-	if s.Find(key) != nil {
+	if s.Get(key) != nil {
 		return true
 	}
 
 	return false
 }
 
-func (s *Skiplist) Insert(key, value interface{}) error {
-	prevs := make([]*node, s.maxLevel, s.maxLevel)
+func (s *Skiplist) Set(key, value interface{}) error {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
 
+	prevs := make([]*node, s.maxLevel, s.maxLevel)
 	n := s.root
 	for i := s.level - 1; i >= 0; i-- {
 		for n.next[i] != nil && s.cmp.Compare(n.next[i].data.key, key) >= 0 {
@@ -152,7 +162,10 @@ func (s *Skiplist) Insert(key, value interface{}) error {
 	return nil
 }
 
-func (s *Skiplist) Delete(key interface{})  error {
+func (s *Skiplist) Delete(key interface{}) error {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
 	prevs := make([]*node, s.maxLevel, s.maxLevel)
 	head := s.root
 
