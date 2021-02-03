@@ -32,17 +32,21 @@ func benchmark(level, n int) {
 }
 
 func BenchmarkLevel6(b *testing.B) {
+	b.ReportAllocs()
 	benchmark(6, b.N)
 }
 
 func BenchmarkLevel8(b *testing.B) {
+	b.ReportAllocs()
 	benchmark(8, b.N)
 }
 
 func BenchmarkLevel10(b *testing.B) {
+	b.ReportAllocs()
 	benchmark(10, b.N)
 }
 
 func BenchmarkLevel12(b *testing.B) {
+	b.ReportAllocs()
 	benchmark(12, b.N)
 }
