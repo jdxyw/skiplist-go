@@ -83,6 +83,7 @@ func TestSkiplist_Get(t *testing.T) {
 	s.Set([]byte("ccccc"), []byte("dddd"))
 	s.Set([]byte(""), []byte("abc"))
 	s.Set([]byte("a"), []byte("a"))
+	s.Set([]byte("a"), []byte("bb"))
 	s.Set([]byte("abc"), []byte("def"))
 	s.Set([]byte("ddd"), []byte("fgb"))
 	s.Set([]byte("$$$"), []byte("###"))
@@ -97,7 +98,7 @@ func TestSkiplist_Get(t *testing.T) {
 		want    interface{}
 		wantErr error
 	}{
-		{name: "case1", args: args{key: []byte("a")}, want: []byte("a"), wantErr: nil},
+		{name: "case1", args: args{key: []byte("a")}, want: []byte("bb"), wantErr: nil},
 		{name: "case2", args: args{key: []byte("")}, want: []byte("abc"), wantErr: nil},
 		{name: "case3", args: args{key: []byte(" ")}, want: []byte(" "), wantErr: nil},
 		{name: "case4", args: args{key: []byte("ccccc")}, want: []byte("dddd"), wantErr: nil},
@@ -140,5 +141,22 @@ func TestSkiplist_Len(t *testing.T) {
 
 	if s.Len() != 7 {
 		t.Errorf("Len() = %v, want 7", s.Len())
+	}
+}
+
+func TestSkiplist_MaxLevel(t *testing.T) {
+	s := NewSkiplist(20, nil)
+	s.Set([]byte("aaaaa"), []byte("bbbb"))
+	s.Set([]byte("aaaba"), []byte("cccc"))
+	s.Set([]byte("ccccc"), []byte("dddd"))
+	s.Set([]byte(""), []byte("abc"))
+	s.Set([]byte("a"), []byte("a"))
+	s.Set([]byte("abc"), []byte("def"))
+	s.Set([]byte("ddd"), []byte("fgb"))
+	s.Set([]byte("$$$"), []byte("###"))
+	s.Set([]byte(" "), []byte(" "))
+
+	if s.MaxLevel() != kMaxHeight {
+		t.Errorf("MaxLevel() = %v, want %v", s.MaxLevel(), kMaxHeight)
 	}
 }

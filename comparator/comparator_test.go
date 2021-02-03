@@ -25,6 +25,10 @@ func Test_defaultCmp_Compare(t *testing.T) {
 			if got := de.Compare(tt.args.rhs, tt.args.lhs); got != tt.want {
 				t.Errorf("Compare() = %v, want %v", got, tt.want)
 			}
+
+			if de.Name() != tt.name {
+				t.Errorf("invalid comparator name")
+			}
 		})
 	}
 }
