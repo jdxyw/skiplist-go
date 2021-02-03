@@ -4,7 +4,7 @@ import (
 	"errors"
 	"math/rand"
 	"sync"
-	)
+)
 
 const (
 	kMaxHeight = 12
@@ -12,9 +12,11 @@ const (
 )
 
 var (
+	// The error message if the key is not found in current list.
 	ErrNotFound = errors.New("key not found")
 )
 
+// The Data load in each node of list.
 type Data struct {
 	key   interface{}
 	value interface{}
@@ -49,6 +51,9 @@ type Skiplist struct {
 	mutex    sync.RWMutex
 }
 
+// NewSkiplist creates a skiplist. maxlevel specific the max level this skiplist would support.
+// cmp is a Comparator object. If nil, the skiplist would use the default Comparator - BytewiseComparator.
+// It supports all kinds of type as long as you define it.
 func NewSkiplist(maxlevel int, cmp Comparator) *Skiplist {
 	newCmp := cmp
 	if newCmp == nil {
@@ -71,14 +76,17 @@ func NewSkiplist(maxlevel int, cmp Comparator) *Skiplist {
 	}
 }
 
+// Len returns the length of current skiplist.
 func (s *Skiplist) Len() int {
 	return s.length
 }
 
+// Level returns the current level of current skiplist.
 func (s *Skiplist) Level() int {
 	return s.level
 }
 
+// MaxLevel returns the max level allowed by skiplist.
 func (s *Skiplist) MaxLevel() int {
 	return s.maxLevel
 }
@@ -96,18 +104,12 @@ func (s *Skiplist) getGreaterOrEqual(key interface{}) (*node, []*node) {
 	return n, prevs
 }
 
+// Get returns the corresponding value for specific value. error would be nil if the key is exist in the list.
 func (s *Skiplist) Get(key interface{}) (interface{}, error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
 	n, _ := s.getGreaterOrEqual(key)
-
-	//n := s.root
-	//for i := s.level - 1; i >= 0; i-- {
-	//	for n.next[i] != nil && s.cmp.Compare(n.next[i].data.key, key) < 0 {
-	//		n = n.next[i]
-	//	}
-	//}
 
 	n = n.next[0]
 
@@ -118,6 +120,7 @@ func (s *Skiplist) Get(key interface{}) (interface{}, error) {
 	return nil, ErrNotFound
 }
 
+// Contains return true if the key is exist in the list.
 func (s *Skiplist) Contains(key interface{}) bool {
 	if _, err := s.Get(key); err == nil {
 		return true
@@ -126,18 +129,11 @@ func (s *Skiplist) Contains(key interface{}) bool {
 	return false
 }
 
+// Set would insert a new node into the list with key/value. If the key has been exist
+// in this list, the value would be updated.
 func (s *Skiplist) Set(key, value interface{}) error {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
-
-	//prevs := make([]*node, s.maxLevel, s.maxLevel)
-	//n := s.root
-	//for i := s.level - 1; i >= 0; i-- {
-	//	for n.next[i] != nil && s.cmp.Compare(n.next[i].data.key, key) < 0 {
-	//		n = n.next[i]
-	//	}
-	//	prevs[i] = n
-	//}
 
 	n, prevs := s.getGreaterOrEqual(key)
 
@@ -165,21 +161,12 @@ func (s *Skiplist) Set(key, value interface{}) error {
 	return nil
 }
 
+// Delete would remove specific node from the list based on the key.
 func (s *Skiplist) Delete(key interface{}) error {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
-	//prevs := make([]*node, s.maxLevel, s.maxLevel)
 	head := s.root
-
-	//n := head
-	//for i := s.level - 1; i >= 0; i-- {
-	//	for n.next[i] != nil && s.cmp.Compare(n.next[i].data.key, key) < 0 {
-	//		n = n.next[i]
-	//	}
-	//	prevs[i] = n
-	//}
-
 	n, prevs := s.getGreaterOrEqual(key)
 
 	n = n.next[0]
@@ -201,6 +188,7 @@ func (s *Skiplist) Delete(key interface{}) error {
 	return nil
 }
 
+// randLevel returns how many level the new node would use.
 func (s *Skiplist) randLevel() int {
 	h := 1
 	for h < s.maxLevel && rand.Intn(kBranching) == 0 {
