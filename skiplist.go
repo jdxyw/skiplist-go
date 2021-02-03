@@ -4,9 +4,7 @@ import (
 	"errors"
 	"math/rand"
 	"sync"
-
-	"skiplist-go/comparator"
-)
+	)
 
 const (
 	kMaxHeight = 12
@@ -45,16 +43,16 @@ type Skiplist struct {
 	level    int
 	maxLevel int
 	length   int
-	cmp      comparator.Comparator
+	cmp      Comparator
 	root     *node
 	nodes    []*node
 	mutex    sync.RWMutex
 }
 
-func NewSkiplist(maxlevel int, cmp comparator.Comparator) *Skiplist {
+func NewSkiplist(maxlevel int, cmp Comparator) *Skiplist {
 	newCmp := cmp
 	if newCmp == nil {
-		newCmp = comparator.GetDefaultComparator()
+		newCmp = GetDefaultComparator()
 	}
 
 	if maxlevel < 4 {

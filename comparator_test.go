@@ -1,6 +1,8 @@
-package comparator
+package skiplist
 
-import "testing"
+import (
+	"testing"
+)
 
 func Test_defaultCmp_Compare(t *testing.T) {
 	type args struct {
