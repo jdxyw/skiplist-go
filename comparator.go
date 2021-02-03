@@ -19,7 +19,7 @@ func GetDefaultComparator() Comparator {
 	return BytewiseComparator{}
 }
 
-// Byte-wise comparator is the default comparator.
+// BytewiseComparator is the default comparator.
 type BytewiseComparator struct{}
 
 // Compare compare two byte slices for BytewiseComparator.

@@ -12,7 +12,7 @@ const (
 )
 
 var (
-	// ErrNotFound: if the key is not found in current list.
+	// ErrNotFound returns if the key is not found in current list.
 	ErrNotFound = errors.New("key not found")
 )
 
@@ -41,7 +41,7 @@ func newNode(level int, data *Data) *node {
 	}
 }
 
-// Skiplist
+// Skiplist is the struct of skiplist.
 type Skiplist struct {
 	level    int
 	maxLevel int
