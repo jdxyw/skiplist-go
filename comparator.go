@@ -2,7 +2,8 @@ package skiplist
 
 import "bytes"
 
-// The comparator interface.
+// Comparator interface provides two func, which enables the skiplist
+// support all kinds of type.
 // rhs > lhs : 1
 // rhs == lhs : 0
 // rhs < lhs : -1
@@ -13,11 +14,12 @@ type Comparator interface {
 	Name() string
 }
 
-// Return the default comparator which is the BytewiseComparator.
+// GetDefaultComparator returns the default comparator which is the BytewiseComparator.
 func GetDefaultComparator() Comparator {
 	return BytewiseComparator{}
 }
 
+// Byte-wise comparator is the default comparator.
 type BytewiseComparator struct{}
 
 // Compare compare two byte slices for BytewiseComparator.

@@ -12,7 +12,7 @@ const (
 )
 
 var (
-	// The error message if the key is not found in current list.
+	// ErrNotFound: if the key is not found in current list.
 	ErrNotFound = errors.New("key not found")
 )
 
@@ -41,13 +41,13 @@ func newNode(level int, data *Data) *node {
 	}
 }
 
+// Skiplist
 type Skiplist struct {
 	level    int
 	maxLevel int
 	length   int
 	cmp      Comparator
 	root     *node
-	nodes    []*node
 	mutex    sync.RWMutex
 }
 
@@ -71,7 +71,6 @@ func NewSkiplist(maxlevel int, cmp Comparator) *Skiplist {
 	return &Skiplist{
 		maxLevel: maxlevel,
 		root:     newNode(maxlevel, nil),
-		nodes:    make([]*node, maxlevel, maxlevel),
 		cmp:      newCmp,
 	}
 }
