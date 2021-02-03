@@ -116,3 +116,29 @@ func TestSkiplist_Get(t *testing.T) {
 		})
 	}
 }
+
+func TestSkiplist_Len(t *testing.T) {
+
+	s := NewSkiplist(10, nil)
+	s.Set([]byte("aaaaa"), []byte("bbbb"))
+	s.Set([]byte("aaaba"), []byte("cccc"))
+	s.Set([]byte("ccccc"), []byte("dddd"))
+	s.Set([]byte(""), []byte("abc"))
+	s.Set([]byte("a"), []byte("a"))
+	s.Set([]byte("abc"), []byte("def"))
+	s.Set([]byte("ddd"), []byte("fgb"))
+	s.Set([]byte("$$$"), []byte("###"))
+	s.Set([]byte(" "), []byte(" "))
+
+	if s.Len() != 9 {
+		t.Errorf("Len() = %v, want 9", s.Len())
+	}
+
+	s.Delete([]byte("abc"))
+	s.Delete([]byte("a"))
+	s.Delete([]byte("aaaaaaaa"))
+
+	if s.Len() != 7 {
+		t.Errorf("Len() = %v, want 7", s.Len())
+	}
+}

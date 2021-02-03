@@ -14,7 +14,7 @@ const (
 )
 
 var (
-	ErrNotFound = errors.New("Key not found")
+	ErrNotFound = errors.New("key not found")
 )
 
 type Data struct {
@@ -32,18 +32,6 @@ func newData(key, value interface{}) *Data {
 type node struct {
 	data *Data
 	next []*node
-}
-
-func (n *node) Key() interface{} {
-	return n.data.key
-}
-
-func (n *node) Value() interface{} {
-	return n.data.value
-}
-
-func (n *node) NextWithLevel(i int) *node {
-	return n.next[i]
 }
 
 func newNode(level int, data *Data) *node {
@@ -97,16 +85,31 @@ func (s *Skiplist) MaxLevel() int {
 	return s.maxLevel
 }
 
-func (s *Skiplist) Get(key interface{}) (interface{}, error) {
-	s.mutex.RLock()
-	defer s.mutex.RUnlock()
-
+func (s *Skiplist) getGreaterOrEqual(key interface{}) (*node, []*node) {
+	prevs := make([]*node, s.maxLevel, s.maxLevel)
 	n := s.root
 	for i := s.level - 1; i >= 0; i-- {
 		for n.next[i] != nil && s.cmp.Compare(n.next[i].data.key, key) < 0 {
 			n = n.next[i]
 		}
+		prevs[i] = n
 	}
+
+	return n, prevs
+}
+
+func (s *Skiplist) Get(key interface{}) (interface{}, error) {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	n, _ := s.getGreaterOrEqual(key)
+
+	//n := s.root
+	//for i := s.level - 1; i >= 0; i-- {
+	//	for n.next[i] != nil && s.cmp.Compare(n.next[i].data.key, key) < 0 {
+	//		n = n.next[i]
+	//	}
+	//}
 
 	n = n.next[0]
 
@@ -129,14 +132,16 @@ func (s *Skiplist) Set(key, value interface{}) error {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
-	prevs := make([]*node, s.maxLevel, s.maxLevel)
-	n := s.root
-	for i := s.level - 1; i >= 0; i-- {
-		for n.next[i] != nil && s.cmp.Compare(n.next[i].data.key, key) < 0 {
-			n = n.next[i]
-		}
-		prevs[i] = n
-	}
+	//prevs := make([]*node, s.maxLevel, s.maxLevel)
+	//n := s.root
+	//for i := s.level - 1; i >= 0; i-- {
+	//	for n.next[i] != nil && s.cmp.Compare(n.next[i].data.key, key) < 0 {
+	//		n = n.next[i]
+	//	}
+	//	prevs[i] = n
+	//}
+
+	n, prevs := s.getGreaterOrEqual(key)
 
 	// The key is already in this list, just update the value field.
 	if n.next[0] != nil && s.cmp.Compare(n.next[0].data.key, key) == 0 {
@@ -166,16 +171,18 @@ func (s *Skiplist) Delete(key interface{}) error {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
-	prevs := make([]*node, s.maxLevel, s.maxLevel)
+	//prevs := make([]*node, s.maxLevel, s.maxLevel)
 	head := s.root
 
-	n := head
-	for i := s.level - 1; i >= 0; i-- {
-		for n.next[i] != nil && s.cmp.Compare(n.next[i].data.key, key) < 0 {
-			n = n.next[i]
-		}
-		prevs[i] = n
-	}
+	//n := head
+	//for i := s.level - 1; i >= 0; i-- {
+	//	for n.next[i] != nil && s.cmp.Compare(n.next[i].data.key, key) < 0 {
+	//		n = n.next[i]
+	//	}
+	//	prevs[i] = n
+	//}
+
+	n, prevs := s.getGreaterOrEqual(key)
 
 	n = n.next[0]
 	if n == nil || s.cmp.Compare(n.data.key, key) != 0 {
