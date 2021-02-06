@@ -4,8 +4,9 @@
 [![codecov](https://codecov.io/gh/jdxyw/skiplist-go/branch/main/graph/badge.svg?token=BK9VMLZKHI)](https://codecov.io/gh/jdxyw/skiplist-go)
 [![Go Report Card](https://goreportcard.com/badge/github.com/jdxyw/skiplist-go)](https://goreportcard.com/report/github.com/jdxyw/skiplist-go)
 
-Skiplist package in Golang
+Skip list is a probabilistic data structure that allows $O(log n)$ search complexity as well as $O(log n)$ insertion complexity within an ordered sequence of $n$ elements.
 
+This package implements a genetic skip list with `interface{}` type. You could define your expected type you want.
 # Install
 
 Install this package through `go get`.
